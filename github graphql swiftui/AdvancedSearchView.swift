@@ -87,25 +87,32 @@ struct AdvancedSearchView: View {
         .onAppear {
             initializePopupSelections()
         }
-        .onChange(of: queryValues) { newValue in
-            var queries: [String] = []
-            
-            for query in queryTypes {
-                let value = newValue[query.query] ?? ""
-                if !value.isEmpty {
-                    if query.number {
-                        let popupKey = popupSelections[query.query] ?? ""
-                        let op = numPopUps[popupKey] ?? ""
-                        queries.append("\(query.query)\(op)\(value)")
-                    } else {
-                        queries.append("\(query.query)\(value)")
-                    }
-                }
-            }
-            
-            builtQueries = queries
+        .onChange(of: queryValues) { _ in
+            queryBuilt()
+        }
+        .onChange(of: popupSelections) { _ in
+            queryBuilt()
         }
         
+    }
+    
+    private func queryBuilt() {
+        var queries: [String] = []
+        
+        for query in queryTypes {
+            let value = queryValues[query.query] ?? ""
+            if !value.isEmpty {
+                if query.number {
+                    let popupKey = popupSelections[query.query] ?? ""
+                    let op = numPopUps[popupKey] ?? ""
+                    queries.append("\(query.query)\(op)\(value)")
+                } else {
+                    queries.append("\(query.query)\(value)")
+                }
+            }
+        }
+        
+        builtQueries = queries
     }
 }
 
